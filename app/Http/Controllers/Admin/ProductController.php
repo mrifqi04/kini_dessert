@@ -94,7 +94,7 @@ class ProductController extends Controller
         $this->validate($request, [
             'title' => 'required',
             'description' => 'required',
-            'cover' => $product->exists ? 'image|mimes:jpeg,png' : 'required|image|mimes:jpeg,png',
+            // 'cover' => $product->exists ? 'image' : 'required|image',
             'stock' => 'required|numeric',
             'price' => 'required|numeric',
             'category_ids.*' => 'numeric|exists:categories,category_id',

@@ -42,7 +42,7 @@ class ProductController extends Controller
         if (auth()->id()) {
             $recommendation = Prediction::with('product')
                 ->where('user_id', auth()->id())
-                ->where('rating', '>', 3)
+                ->where('rating', '>=', 4)
                 ->orderBy('rating', 'desc')
                 ->first();
         } else {
@@ -64,7 +64,7 @@ class ProductController extends Controller
     {
         $product = Product::where('slug', $slug)->first();
         if (!$product) {
-            return abort(404, "Buku tidak ditemukan.");
+            return abort(404, "Produk tidak ditemukan.");
         }
 
         $other_products = Product::whereNotIn('product_id', [$product->product_id])

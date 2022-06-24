@@ -3,11 +3,12 @@
 namespace App\Console\Commands;
 
 use App\Libraries\ItemBasedCF;
-use App\Models\Book;
 use App\Models\Prediction;
+use App\Models\Product;
 use App\Models\Rating;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
 
 class UpdatePredictions extends Command
 {
@@ -16,7 +17,7 @@ class UpdatePredictions extends Command
      *
      * @var string
      */
-    protected $signature = 'update-predictions {user_id?} {book_id?}';
+    protected $signature = 'update-predictions {user_id?} {product_id?}';
 
     /**
      * The console command description.
@@ -42,14 +43,14 @@ class UpdatePredictions extends Command
      */
     public function handle()
     {
-        $userId = $this->argument("user_id");
-        $bookId = $this->argument("book_id");
-
+        $userId = $this->argument("user_id");        
+        $productId = $this->argument("product_id");
+        
         if ($userId) {
             $user = User::findOrFail($userId);
-            if ($bookId) {
-                $book = Book::findOrFail($bookId);
-                return $this->updatePrediction($user, $book);
+            if ($productId) {
+                $product = Product::findOrFail($productId);
+                return $this->updatePrediction($user, $product);
             }
 
             return $this->updateUserPredictions($user);
@@ -59,54 +60,53 @@ class UpdatePredictions extends Command
     }
 
     public function updateAllPredictions()
-    {
+    {        
         Prediction::truncate();
         $users = User::where('type', User::TYPE_MEMBER)->get();
-        $books = Book::all();
+        $products = Product::all();
         foreach ($users as $user) {
-            foreach ($books as $book) {
-                $this->updatePrediction($user, $book);
+            foreach ($products as $product) {
+                $this->updatePrediction($user, $product);
             }
         }
     }
 
     public function updateUserPredictions(User $user)
     {
-        $books = Book::all();
-        foreach ($books as $book) {
-            $this->updatePrediction($user, $book);
+        $products = Product::all();
+        foreach ($products as $product) {
+            $this->updatePrediction($user, $product);
         }
     }
 
-    public function updatePrediction(User $user, Book $book)
+    public function updatePrediction(User $user, Product $product)
     {
-        if ($this->userHasRating($user, $book)) {
-            return $this->removePrediction($user, $book);
-        }
+        // if ($this->userHasRating($user, $product)) {            
+        //     return $this->updatePrediction($user, $product);
+        // }
 
-        $cf = new ItemBasedCF($user, $book);
+        $cf = new ItemBasedCF($user, $product);
         $prediction = $cf->predict();
-
-        Prediction::savePrediction($user, $book, $prediction);
+        Prediction::savePrediction($user, $product, $prediction);
 
         $userId = $user->getKey();
-        $bookId = $book->getKey();
-        $this->info("Set prediction user:$userId book:$bookId = $prediction");
+        $productId = $product->getKey();
+        $this->info("Set prediction user:$userId product:$productId = $prediction");
     }
 
-    public function userHasRating(User $user, Book $book)
+    public function userHasRating(User $user, Product $product)
     {
         return Rating::query()
             ->where('user_id', $user->getKey())
-            ->where('book_id', $book->getKey())
+            ->where('product_id', $product->getKey())
             ->count() > 0;
     }
 
-    public function removePrediction(User $user, Book $book)
+    public function removePrediction(User $user, Product $product)
     {
         $userId = $user->getKey();
-        $bookId = $book->getKey();
-        Prediction::removePrediction($user, $book);
-        $this->warn("Remove prediction user:{$userId} book:$bookId");
+        $productId = $product->getKey();
+        Prediction::removePrediction($user, $product);
+        $this->warn("Remove prediction user:{$userId} product:$productId");
     }
 }

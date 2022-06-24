@@ -2,30 +2,30 @@
 
 namespace App\Libraries;
 
-use App\Models\Book;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Arr;
 
 class ItemBasedCF
 {
-    public function __construct(User $user, Book $book, $countNeighbors = 2)
+    public function __construct(User $user, Product $product, $countNeighbors = 2)
     {
         $this->user = $user;
-        $this->book = $book;
+        $this->product = $product;
         $this->countNeighbors = $countNeighbors;
     }
 
     public function predict()
     {
         $user = $this->user;
-        $book = $this->book;
+        $product = $this->product;
         $countNeighbors = $this->countNeighbors;
 
         // Step 1: menghitung similaritas buku yang ingin diprediksi dengan buku-buku lain
-        $similarities = $this->getSimilarities($book);
+        $similarities = $this->getSimilarities($product);
 
         // Step 2: mencari tahu neighbors
-        $userRatings = $user->ratings()->pluck('rating', 'book_id')->toArray();
+        $userRatings = $user->ratings()->pluck('rating', 'product_id')->toArray();
         $neighbors = $this->getNeighbors($similarities, $userRatings, $countNeighbors);
 
         // Step 3: menghitung prediksi dengan weighted sum terhadap neighbors dan userRatings
@@ -34,17 +34,17 @@ class ItemBasedCF
         return $prediction;
     }
 
-    public function getSimilarities(Book $book)
+    public function getSimilarities(Product $product)
     {
-        $otherBooks = Book::whereNotIn('book_id', [$book->getKey()])->get();
+        $otherProducts = Product::whereNotIn('product_id', [$product->getKey()])->get();
         $sims = [];
-        $bookRatings = $book->ratings()->pluck('rating', 'user_id')->toArray();
+        $productRatings = $product->ratings()->pluck('rating', 'user_id')->toArray();
 
-        foreach ($otherBooks as $otherBook) {
-            $otherBookRatings = $otherBook->ratings()->pluck('rating', 'user_id')->toArray();
+        foreach ($otherProducts as $otherProduct) {
+            $otherProductRatings = $otherProduct->ratings()->pluck('rating', 'user_id')->toArray();
 
-            $pearsonCorrelation = new PearsonCorrelation($bookRatings, $otherBookRatings);
-            $sims[$otherBook->getKey()] = $pearsonCorrelation->calculate();
+            $pearsonCorrelation = new PearsonCorrelation($productRatings, $otherProductRatings);
+            $sims[$otherProduct->getKey()] = $pearsonCorrelation->calculate();
         }
         return $sims;
     }
@@ -57,8 +57,8 @@ class ItemBasedCF
         });
 
         // Ambil similaritas dari buku yang pernah dirating user saja
-        $hasRatingBookIds = array_keys($userRatings);
-        $similarities = Arr::only($similarities, $hasRatingBookIds);
+        $hasRatingProductIds = array_keys($userRatings);
+        $similarities = Arr::only($similarities, $hasRatingProductIds);
 
         // Urutkan similaritas dari yang tertinggi
         uasort($similarities, function($a, $b) {
@@ -74,8 +74,8 @@ class ItemBasedCF
         $top = 0;
         $bottom = 0;
 
-        foreach ($neighbors as $bookId => $sim) {
-            $rating = $userRatings[$bookId];
+        foreach ($neighbors as $productId => $sim) {
+            $rating = $userRatings[$productId];
             $top += ($rating * $sim);
             $bottom += abs($sim);
         }
@@ -95,33 +95,37 @@ class ItemBasedCF
         $explainer = new Explainer;
 
         $user = $this->user;
-        $book = $this->book;
+        $product = $this->product;
         $countNeighbors = $this->countNeighbors;
-        $userRatings = $user->ratings()->pluck('rating', 'book_id')->toArray();
-        $bookId = $book->getKey();
+        $userRatings = $user->ratings()->pluck('rating', 'product_id')->toArray();
+        $productId = $product->getKey();
 
         $inputs = [
             ["user", $user->name],
-            ["book", $book->title],
+            ["product", $product->title],
             ["countNeighbours", $countNeighbors],
         ];
         $explainer->addTable("INPUT", ["Parameter", "Value"], $inputs);
 
         // Step 1: menghitung similaritas buku yang ingin diprediksi dengan buku-buku lain
-        $similarities = $this->getSimilarities($book);
+        $similarities = $this->getSimilarities($product);
         $sims = [];
-        foreach ($similarities as $otherBookId => $sim) {
-            $sims[] = [$bookId, $otherBookId, $sim, Arr::get($userRatings, $otherBookId)];
+        foreach ($similarities as $otherProductId => $sim) {
+            $product_name = Product::where('product_id', $productId)->first('title');        
+            $other_product_name = Product::where('product_id', $otherProductId)->first('title');
+            $sims[] = [$product_name->title, $other_product_name->title, $sim, Arr::get($userRatings, $otherProductId)];
         }
-        $explainer->addTable("BOOK SIMILARITIES", ["book_id", "other_book_id", "similarity", "user_rating"], $sims);
+        $explainer->addTable("PRODUCT SIMILARITIES", ["product_id", "other_product_id", "similarity", "user_rating"], $sims);
 
         // Step 2: mencari tahu neighbors
         $neighbors = $this->getNeighbors($similarities, $userRatings, $countNeighbors);
         $nhs = [];
-        foreach ($neighbors as $otherBookId => $sim) {
-            $nhs[] = [$bookId, $otherBookId, $sim, Arr::get($userRatings, $otherBookId)];
+        foreach ($neighbors as $otherProductId => $sim) {
+            $product_name = Product::where('product_id', $productId)->first('title');        
+            $other_product_name = Product::where('product_id', $otherProductId)->first('title');                    
+            $nhs[] = [$product_name->title, $other_product_name->title, $sim, Arr::get($userRatings, $otherProductId)];
         }
-        $explainer->addTable("NEIGHBORS", ["book_id", "other_book_id", "similarity", "user_rating"], $nhs);
+        $explainer->addTable("NEIGHBORS", ["product_id", "other_product_id", "similarity", "user_rating"], $nhs);
 
         // Step 3: menghitung prediksi dengan weighted sum terhadap neighbors dan userRatings
         $prediction = $this->calculateWeightedSum($neighbors, $userRatings);
@@ -136,8 +140,8 @@ class ItemBasedCF
         $top = [];
         $bottom = [];
 
-        foreach ($neighbors as $bookId => $sim) {
-            $rating = $userRatings[$bookId];
+        foreach ($neighbors as $productId => $sim) {
+            $rating = $userRatings[$productId];
             $top[] = "($rating * $sim)";
             $bottom[] = "|{$sim}|";
         }

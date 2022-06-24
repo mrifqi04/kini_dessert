@@ -99,7 +99,7 @@
                     <a href="{{ route('admin::orders.show', $order->order_id) }}" class="btn btn-info btn-edit btn-sm"><i class="fa fa-search"></i> Detail</a>
                     <form action="{{ route('admin::orders.delete', $order->order_id) }}" class="d-inline" method="post">
                       @csrf
-                      <button class="btn btn-danger btn-sm" onclick="return confirm('Apa kamu yakin ingin menghapus buku ini?')">Delete</button>
+                      <button class="btn btn-danger btn-sm" onclick="return confirm('Apa kamu yakin ingin menghapus produk ini?')">Delete</button>
                     </form>
                   </td>
                 </tr>

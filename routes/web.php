@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'as' => 'front::',
     'namespace' => 'Front',
-], function() {
+], function () {
     Route::get('/', 'HomeController@index')->name('home');
 
     Route::get('/products', 'ProductController@index')->name('products.index');
@@ -44,10 +44,14 @@ Route::group([
 
     Route::group([
         'middleware' => 'member',
-    ], function() {
+    ], function () {
         Route::get('/checkout', 'CheckoutController@form')->name('checkout.form');
         Route::post('/checkout', 'CheckoutController@submit')->name('checkout.submit');
         Route::get('/checkout/success/{order_code}', 'CheckoutController@success')->name('checkout.success');
+
+        //Raja Ongkir API
+        Route::post('/get_regencies', 'CheckoutController@getRegencies')->name('get_regencies');
+        Route::post('/get_ongkos', 'CheckoutController@getOngkos')->name('get_ongkos');
 
         Route::post('/rating', 'RatingController@rating')->name('rating');
 
@@ -75,17 +79,17 @@ Route::group([
     'prefix' => '/admin',
     'as' => 'admin::',
     'namespace' => 'Admin',
-], function() {
+], function () {
     Route::get('/login', 'LoginController@form')->name('login.form');
     Route::post('/login', 'LoginController@submit')->name('login.submit');
     Route::get('/logout', 'LoginController@logout')->name('logout');
 
     Route::group([
         'middleware' => 'admin',
-    ], function() {
+    ], function () {
         Route::get('/', 'DashboardController@index')->name('dashboard.index');
 
-        // CRUD BUKU
+        // CRUD Produk
         Route::get('/products', 'ProductController@index')->name('products.index');
         Route::get('/products/create', 'ProductController@create')->name('products.create');
         Route::post('/products/create', 'ProductController@store')->name('products.store');

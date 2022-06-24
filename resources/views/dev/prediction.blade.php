@@ -36,11 +36,11 @@
             <div class="form-group">
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <span class="input-group-text">Buku</span>
+                  <span class="input-group-text">Produk</span>
                 </div>
-                <select name="book_id" class="form-control">
-                  @foreach($books as $book)
-                    <option {{ request('book_id') == $book->getKey() ? 'selected' : '' }} value="{{ $book->getKey() }}">{{ $book->title }}</option>
+                <select name="product_id" class="form-control">
+                  @foreach($products as $product)
+                    <option {{ request('product_id') == $product->getKey() ? 'selected' : '' }} value="{{ $product->getKey() }}">{{ $product->title }}</option>
                   @endforeach
                 </select>
               </div>

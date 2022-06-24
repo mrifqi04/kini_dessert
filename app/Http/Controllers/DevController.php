@@ -6,9 +6,9 @@ use App\Libraries\ItemBasedCF;
 use App\Libraries\PearsonCorrelation;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Book;
 use App\Models\Rating;
 use App\Models\Prediction;
+use App\Models\Product;
 use Illuminate\Support\Facades\Artisan;
 
 class DevController extends Controller
@@ -16,35 +16,37 @@ class DevController extends Controller
     public function index(Request $request)
     {
         $members = User::where('type', 'member')->orderBy('user_id')->get();
-        $books = Book::orderBy('book_id')->take(10)->get();
+        $products = Product::orderBy('product_id')->take(10)->get();
 
-        $predictions = Prediction::with(['book', 'user'])->get();
+        $predictions = Prediction::with(['product', 'user'])->get();
+
+        // dd($predictions);
 
         return view('dev.index', [
             'members' => $members,
-            'books' => $books,
+            'products' => $products,
             'predictions' => $predictions,
         ]);
     }
 
     public function pearsonCorrelation(Request $request)
     {
-        $bookId1 = $request->get('book_id_1');
-        $bookId2 = $request->get('book_id_2');
+        $productId1 = $request->get('product_id_1');
+        $productId2 = $request->get('product_id_2');
 
-        if (is_numeric($bookId1) && is_numeric($bookId2)) {
-            $book1 = Book::findOrFail($bookId1);
-            $book2 = Book::findOrFail($bookId2);
+        if (is_numeric($productId1) && is_numeric($productId2)) {
+            $product1 = Product::findOrFail($productId1);
+            $product2 = Product::findOrFail($productId2);
 
-            $book1Ratings = $book1->ratings()->pluck('rating', 'user_id')->toArray();
-            $book2Ratings = $book2->ratings()->pluck('rating', 'user_id')->toArray();
+            $product1Ratings = $product1->ratings()->pluck('rating', 'user_id')->toArray();
+            $product2Ratings = $product2->ratings()->pluck('rating', 'user_id')->toArray();
 
-            $pearsonCorrelation = new PearsonCorrelation($book1Ratings, $book2Ratings);
+            $pearsonCorrelation = new PearsonCorrelation($product1Ratings, $product2Ratings);
 
-            $data['explainer'] = $pearsonCorrelation->explain($book1->title, $book2->title);
+            $data['explainer'] = $pearsonCorrelation->explain($product1->title, $product2->title);
         }
 
-        $data['books'] = Book::orderBy('title')->get();
+        $data['products'] = Product::orderBy('title')->get();
 
         return view('dev.pearson-correlation', $data);
     }
@@ -53,21 +55,22 @@ class DevController extends Controller
     {
         $this->validate($request, [
             'ratings.*.user_id' => 'required|exists:users,user_id',
-            'ratings.*.book_id' => 'required|exists:books,book_id',
+            'ratings.*.product_id' => 'required|exists:products,product_id',
             'ratings.*.rating' => 'required|numeric|min:1|max:5',
         ]);
 
         $ratings = $request->get('ratings');
         $users = User::whereIn('user_id', collect($ratings)->pluck('user_id')->toArray())->get()->keyBy('user_id');
-        $books = Book::whereIn('book_id', collect($ratings)->pluck('book_id')->toArray())->get()->keyBy('book_id');
-
+        $products = Product::whereIn('product_id', collect($ratings)->pluck('product_id')->toArray())->get()->keyBy('product_id');           
+        
         foreach ($ratings as $rating) {
             $user = $users[$rating['user_id']];
-            $book = $books[$rating['book_id']];
-            $user->setRating($book, $rating['rating']);
+            $product = $products[$rating['product_id']];
+            $user->setRating($product, $rating['rating']);
         }
-
-        Artisan::call('update-predictions');
+        
+        // Artisan::call('update-predictions', ['user_id' => $user_data, 'product_id' => $product_data]);        
+        Artisan::call('update-predictions');        
 
         return response()->json([
             'status' => 'ok'
@@ -87,19 +90,19 @@ class DevController extends Controller
     public function prediction(Request $request)
     {
         $userId = $request->get('user_id');
-        $bookId = $request->get('book_id');
+        $productId = $request->get('product_id');
 
-        if ($userId && $bookId) {
+        if ($userId && $productId) {
             $user = User::findOrfail($userId);
-            $book = Book::findOrfail($bookId);
+            $product = Product::findOrfail($productId);
 
-            $cf = new ItemBasedCF($user, $book);
-
+            $cf = new ItemBasedCF($user, $product);
             $data['explainer'] = $cf->explain();
         }
-
+        
+        // dd($userId, $productId);
         $data['users'] = User::where('type', User::TYPE_MEMBER)->orderBy('name')->get();
-        $data['books'] = Book::orderBy('title')->get();
+        $data['products'] = Product::orderBy('title')->get();
 
         return view('dev/prediction', $data);
     }

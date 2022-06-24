@@ -8,12 +8,18 @@ class Prediction extends Model
 {
     public $timestamps = false;
 
+    protected $primaryKey = "prediction_id";
+
+    protected $fillable = [
+        'user_id', 'product_id', 'rating'
+    ];
+
     public static function savePrediction(User $user, Product $product, float $rating)
     {
         $prediction = static::query()
             ->where('user_id', $user->getKey())
             ->where('product_id', $product->getKey())
-            ->first();
+            ->first();        
 
         if (!$prediction) {
             $prediction = new static;

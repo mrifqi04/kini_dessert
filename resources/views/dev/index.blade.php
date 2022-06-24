@@ -112,7 +112,7 @@
                     <tr>
                       <th class="text-center" width="50">No.</th>
                       <th>User</th>
-                      <th>Buku</th>
+                      <th>Produk</th>
                       <th class="text-center" width="150">Prediksi</th>
                       <th class="text-center" width="50">Aksi</th>
                     </tr>
@@ -122,7 +122,7 @@
                       <tr>
                         <td class="text-center">{{ $i + 1 }}</td>
                         <td>{{ $prediction->user->name }}</td>
-                        <td>{{ $prediction->book->title }}</td>
+                        <td>{{ $prediction->product->title }}</td>
                         <td class="text-center">{{ $prediction->rating }}</td>
                         <td class="text-center">
                           <a href="{{ url("dev/prediction?user_id={$prediction->user_id}&product_id={$prediction->product_id}") }}" class="btn btn-info btn-sm">

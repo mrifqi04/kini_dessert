@@ -5,7 +5,7 @@
       <div class="row flex-wrap align-content-center">
         <div class="col-lg-12">
           <div class="banner_content text-center mt-5 py-5">
-            <p class="text-uppercase bg-overlay-primary p-3" style="width: auto; display: inline-block; background-color: rgba(255, 200, 50, 0.8)">
+            {{-- <p class="text-uppercase bg-overlay-primary p-3" style="width: auto; display: inline-block; background-color: rgba(255, 200, 50, 0.8)">
               <strong>{{ strtoupper(config('app.name')) }}</strong>
             </p>
             <br>
@@ -14,7 +14,7 @@
             </h3>
             <div>
               <a href="{{ route('front::products.index') }}" class="btn btn-primary btn-lg mb-3 mb-sm-0">BROWSE PRODUCTS</a>
-            </div>
+            </div> --}}
           </div>
         </div>
       </div>

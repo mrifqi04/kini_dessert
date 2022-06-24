@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
@@ -94,7 +95,7 @@ class UserController extends Controller
             ->with('info', "User '{$user->name}' telah dihapus.");
     }
 
-    public function save(product $product, Request $request)
+    public function save(Product $product, Request $request)
     {
         $this->validate($request, [
             'title' => 'required',

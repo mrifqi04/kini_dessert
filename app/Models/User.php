@@ -62,8 +62,8 @@ class User extends Authenticatable
     }
 
     public function getRating(Product $product)
-    {
-        $rating = $this->ratings()->where('product_id', $product->product_id)->first();
+    {        
+        $rating = $this->ratings()->where('product_id', $product->product_id)->first();        
         return (int) ($rating ? $rating->rating : null);
     }
 

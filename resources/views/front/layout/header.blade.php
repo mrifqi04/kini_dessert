@@ -28,9 +28,10 @@ $route_name = request()->route()->getName();
     <nav class="navbar navbar-expand-lg navbar-light">
       <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
-        <a class="navbar-brand logo_h" href="{{ route('front::home') }}">
+        <a class="navbar-brand text-light" href="{{ route('front::home') }}">
           {{-- <img src="{{ asset('edustage') }}/img/logo.png" alt=""/> --}}
-          <strong>{{ strtoupper(config('app.name')) }}</strong>
+          {{-- <strong>{{ strtoupper(config('app.name')) }}</strong> --}}
+          <img src="{{ URL::asset('images/logo.png') }}" width="60%" alt="">
         </a>
         <button
           class="navbar-toggler"

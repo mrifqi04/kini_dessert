@@ -41,28 +41,28 @@ a[href] {
   top: 10px;
   left: 10px;
   padding: 0px 6px;
-  background-color: #fdc632;
+  background-color: #fff;
   border-radius: 3px;
   color: #002347;
 }
 
 .card_book .course_head {
   height: 320px;
-  background-color: #002347;
+  background-color: #fdc3c5;
   overflow: hidden;
 }
 
 .btn-primary {
-  background-color: #002347;
-  border-color: #002347;
+  background-color: #fdc3c5;
+  border-color: #d07d78;
   color: white;
 }
 
 .btn-primary:hover,
 .btn-primary:active,
 .btn-primary:focus {
-  background-color: #fdc632;
-  border-color: #fdc632;
+  background-color: #fff;
+  border-color: #fff;
   color: #002347;
 }
 
@@ -71,13 +71,13 @@ a.btn-primary {
 }
 
 .list-group .list-group-item.active {
-  background-color: #002347;
-  border-color: #002347;
+  background-color: #fdc3c5;
+  border-color: #d07d78;
 }
 
 .list-group.secondary .list-group-item.active {
-  background-color: #fdc632;
-  border-color: #fdc632;
+  background-color: #fff;
+  border-color: #fff;
   color: #002347;
 }
 
@@ -88,7 +88,7 @@ a.btn-primary {
 }
 
 .pagination .page-item.active .page-link {
-  background-color: #002347;
-  border-color: #002347;
+  background-color: #fdc3c5;
+  border-color: #d07d78;
   color: white;
 }

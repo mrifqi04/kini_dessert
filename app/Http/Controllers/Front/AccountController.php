@@ -51,6 +51,7 @@ class AccountController extends Controller
     {
         $user = auth()->user();
         $order = $user->orders()->where('order_id', $order_id)->firstOrFail();
+        // dd($order);
 
         return view('front.pages.account.order-detail', [
             'order' => $order,

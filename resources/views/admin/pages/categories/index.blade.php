@@ -56,7 +56,7 @@
               <a href="{{ route('admin::categories.edit', $category->category_id) }}" class="btn btn-primary btn-edit btn-sm">Edit</a>
               <form action="{{ route('admin::categories.delete', $category->category_id) }}" class="d-inline" method="post">
                 @csrf
-                <button class="btn btn-danger btn-sm" onclick="return confirm('Apa kamu yakin ingin menghapus buku ini?')">Delete</button>
+                <button class="btn btn-danger btn-sm" onclick="return confirm('Apa kamu yakin ingin menghapus produk ini?')">Delete</button>
               </form>
             </td>
           </tr>

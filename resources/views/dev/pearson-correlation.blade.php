@@ -22,7 +22,7 @@
             <div class="form-group">
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <span class="input-group-text">Buku 1</span>
+                  <span class="input-group-text">Product 1</span>
                 </div>
                 <select name="product_id_1" class="form-control">
                   @foreach($products as $product)
@@ -36,7 +36,7 @@
             <div class="form-group">
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <span class="input-group-text">Buku 2</span>
+                  <span class="input-group-text">Product 2</span>
                 </div>
                 <select name="product_id_2" class="form-control">
                   @foreach($products as $product)

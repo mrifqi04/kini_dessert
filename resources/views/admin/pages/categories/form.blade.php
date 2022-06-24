@@ -8,7 +8,7 @@ $title = $is_edit ? "Edit Kategori" : "Tambah Kategori";
   'title' => $title,
   'breadcrumb' => [
     'Dashboard' => route('admin::dashboard.index'),
-    'Daftar Buku' => route('admin::categories.index'),
+    'Daftar Produk' => route('admin::categories.index'),
     $name => true,
   ]
 ])

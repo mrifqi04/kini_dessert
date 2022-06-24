@@ -8,7 +8,7 @@
 
     @yield('meta-tags')
 
-    <link rel="icon" href="{{ asset('edustage') }}/img/favicon.png" type="image/png" />
+    <link rel="icon" href="{{ URL::asset('images/logo.png') }}" type="image/png" />
     <title>{{ isset($title) ? $title : config('app.name') }}</title>
 
     @section('styles')
