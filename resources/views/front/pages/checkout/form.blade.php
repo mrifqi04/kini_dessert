@@ -295,14 +295,14 @@
                 $('#select_city').change(function() {
                     $('#select_services').html("")
 
-                    $('#opKirim').append($('<option>', {
-                        value: "jne",
-                        text: "JNE"
-                    }));
-                    $('#opKirim').append($('<option>', {
-                        value: "pos",
-                        text: "POS"
-                    }));
+                    // $('#opKirim').append($('<option>', {
+                    //     value: "jne",
+                    //     text: "JNE"
+                    // }));
+                    // $('#opKirim').append($('<option>', {
+                    //     value: "pos",
+                    //     text: "POS"
+                    // }));
                     $('#opKirim').append($('<option>', {
                         value: "tiki",
                         text: "TIKI"

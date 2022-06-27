@@ -20,8 +20,6 @@ class DevController extends Controller
 
         $predictions = Prediction::with(['product', 'user'])->get();
 
-        // dd($predictions);
-
         return view('dev.index', [
             'members' => $members,
             'products' => $products,

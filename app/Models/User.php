@@ -62,8 +62,8 @@ class User extends Authenticatable
     }
 
     public function getRating(Product $product)
-    {        
-        $rating = $this->ratings()->where('product_id', $product->product_id)->first();        
+    {
+        $rating = $this->ratings()->where('product_id', $product->product_id)->first();
         return (int) ($rating ? $rating->rating : null);
     }
 
@@ -76,7 +76,35 @@ class User extends Authenticatable
             $rating->user_id = $this->user_id;
         }
         $rating->rating = $num;
-        return $rating->save();
+        $rating->save();
+
+        $user = auth()->user();
+
+        $get_prediction = Prediction::where('product_id', $product->product_id)
+            ->where('user_id', $user->user_id)
+            ->first();
+
+        $get_products = Product::all();
+
+        // dd($num);
+        if ($get_prediction) {
+            $get_prediction->rating = $num;
+            $get_prediction->save();
+        } else {            
+            foreach ($get_products as $item) {
+                $prediction = new Prediction;                
+                $prediction->user_id = $user->user_id;
+                $prediction->product_id = $item->product_id;
+                if ($item->product_id == $product->product_id) {
+                    $prediction->rating = $num;                    
+                } else {
+                    $prediction->rating = 0;
+                }
+                $prediction->save();
+            }
+        }
+
+        return;
     }
 
     public function member_profile()

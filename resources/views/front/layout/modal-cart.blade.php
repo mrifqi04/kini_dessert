@@ -89,7 +89,7 @@
           $tr.append("<td width='50'><img src='"+item.product.url_cover+"' style='height:60px'/></td>");
           $tr.append("<td><a href='"+item.product.url_show+"'>"+item.product.title+"</a></td>");
           $tr.append("<td>"+formatNumber(item.product.price)+"</td>");
-          $tr.append("<td width='100'><input type='number' readonly class='form-control cart-item-qty' value='1'/></td>");
+          $tr.append("<td width='100'><input type='number' min=1 class='form-control cart-item-qty' value='1'/></td>");
           $tr.append("<td class='subtotal'>"+formatNumber(item.product.price)+"</td>");
 
           $("#modal-cart").find(".table-cart-items tbody").append($tr);

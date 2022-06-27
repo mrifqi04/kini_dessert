@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Prediction;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Product;
@@ -17,9 +18,11 @@ class RatingController extends Controller
             'rating' => 'required|numeric|min:1|max:5',
         ]);
 
-        $user = auth()->user();
+        $user = auth()->user();        
         $product = Product::findOrFail($request->get('product_id'));
-        $rating = $request->get('rating');
+        $rating = $request->get('rating');        
+
+        // dd($product->product_id, $user->user_id);
 
         $user->setRating($product, $rating);
 
