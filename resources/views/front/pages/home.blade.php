@@ -22,9 +22,12 @@
                 <div class="row">
                     <!-- single course -->
                     <div class="col-lg-12">
-                        <div class="owl-carousel active_course">
-                            @if (Auth::user())
-                                @foreach ($predictions as $item)
+                        <div class="owl-carousel active_course">     
+                            @php 
+                                $check_prediction = count($predictions);
+                            @endphp
+                            @if (Auth::user() && $check_prediction > 0)                                                                                                           
+                            @foreach ($predictions as $item)
                                     <div class="card_book single_course">
                                         <div
                                             class="course_head d-flex flex-wrap justify-content-center align-content-center">
@@ -63,7 +66,7 @@
                                         </div>
                                     </div>
                                 @endforeach
-                            @else
+                            @else                            
                                 @foreach ($popular_products as $item)
                                     <div class="card_book single_course">
                                         <div
@@ -100,6 +103,7 @@
                                     </div>
                                 @endforeach
                             @endif
+                           
                         </div>
                     </div>
                 </div>
